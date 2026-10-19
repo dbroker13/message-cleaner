@@ -1,0 +1,47 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  # push:
+  #   branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-24.04
+
+    # Run all shell steps from the Message Cleaner folder so requirements.txt and the script resolve
+    defaults:
+      run:
+        working-directory: examples/messageCleaner
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v5
+      
+      - name: setup python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      # Runs a single command using the runners shell
+      - name: run python script
+        env:
+          Messages_API_Token: ${{ secrets.Messages_API_Token }}
+        run: python WhatsAppCleaner.py
