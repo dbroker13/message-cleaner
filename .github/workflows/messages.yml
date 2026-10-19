@@ -21,9 +21,9 @@ jobs:
     runs-on: ubuntu-24.04
 
     # Run all shell steps from the Message Cleaner folder so requirements.txt and the script resolve
-    defaults:
-      run:
-        working-directory: examples/messageCleaner
+    # defaults:
+    #   run:
+    #     working-directory: examples/messageCleaner
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
