@@ -26,10 +26,11 @@ options.load_capabilities({
     "headspin:options": {
         # "selector": "device_note:*Whatsapp*",
         "selector": "device_id:R5CT22BKELM",
-        # "capture.video": True,
-        # "capture.network": False,
+        "capture.video": True,
+        "capture.network": False,
     },
 })
+
 try:
     print("Starting Driver")
     driver = webdriver.Remote(
@@ -55,8 +56,7 @@ try:
         print("Open WhatsApp")
         wait.until(EC.presence_of_element_located(
                 (By.ID, 'com.whatsapp:id/toolbar_logo')))
-        
-#try to find the first converstaion as a button then default to linear layout
+    startNum = 2
     try:
         chatWindow = driver.find_element(By.XPATH, '(//android.widget.Button[@resource-id="com.whatsapp:id/contact_row_container"]')
         print("Found the element as a button")
@@ -64,33 +64,48 @@ try:
         chatWindow = driver.find_element(By.XPATH, '(//android.widget.LinearLayout[@resource-id="com.whatsapp:id/contact_row_container"])[1]')
         print("Found the element as a linear layout")
 
-    chatWindow.click()
-    try:
-        messageWait.until(EC.presence_of_element_located(
-                        (By.XPATH, '//android.widget.ImageView[@resource-id="com.whatsapp:id/scroll_bottom_icon"]'))).click()
-        print("Hitting scroll button...")
-        time.sleep(3)
-    except:
-        print("Scroll button not present moving on")
-    #mobile: touchAndHold #
-# mobile: longClickGesture {"elementId": "00000000-0000-0092-ffff-ffff0000027a", "duration": 2000}
+        skipped_targets = chatWindow.find_elements(
+            By.XPATH, './/android.widget.TextView[contains(@text, "Stage Sandbox")]')
+        if skipped_targets:
+            try:
+                chatWindow = driver.find_element(By.XPATH, '(//android.widget.LinearLayout[@resource-id="com.whatsapp:id/contact_row_container"])[2]')
+                startNum = 3
+            except:
+                print("All messages are deleted!!")
+                sys.exit(0)
+        else:
+            print("Not our contact")        
     
-    for a in range(20):
-        message = driver.find_element(By.XPATH, '//android.widget.ListView[@resource-id="android:id/list"]/android.view.ViewGroup[2]')
-        
-        driver.execute_script('mobile: longClickGesture', {
-        'elementId': message.id,
+    driver.execute_script('mobile: longClickGesture', {
+        'elementId': chatWindow.id,
         'duration': 2000
     })
-        chatList = driver.find_elements(By.XPATH, '//android.widget.ListView[@resource-id="android:id/list"]/android.view.ViewGroup')
 
-        for i in range(3, len(chatList)):
-            driver.find_element(By.XPATH, f'//android.widget.ListView[@resource-id="android:id/list"]/android.view.ViewGroup[{i}]').click()
-        time.sleep(2)
-        driver.find_element(By.XPATH, '//android.widget.Button[@content-desc="Delete"]').click()
+    try:
+        print("Looking for other chats other chats")
+        chatList = driver.find_elements(By.XPATH, '(//android.widget.LinearLayout[@resource-id="com.whatsapp:id/contact_row_container"])')
+        print("Found other chats")
+        for i in range(startNum, len(chatList)+1):
+            chat = driver.find_element(By.XPATH, f'(//android.widget.LinearLayout[@resource-id="com.whatsapp:id/contact_row_container"])[{i}]')
+            skipped_targets = chat.find_elements(
+                By.XPATH, './/android.widget.TextView[contains(@text, "Stage Sandbox")]')
+            contactNames = chat.find_elements(By.XPATH, './/android.widget.TextView')
+            if skipped_targets:
+                print("This Contact needs Skipped...")
+            else:
+                chat.click()
 
-        messageWait.until(EC.presence_of_element_located(
-            (By.XPATH, '//android.widget.Button[@resource-id="android:id/button1"]'))).click()
+    except:
+        print("No other chats")
+
+    time.sleep(2)
+    wait.until(EC.presence_of_element_located(
+        (By.ACCESSIBILITY_ID, 'Delete chats'))).click()
+    try:
+        driver.find_element(By.XPATH, '//android.widget.Button[@content-desc="Delete all"]').click()
+    except:
+        driver.find_element(By.XPATH, '//android.widget.Button[@content-desc="Delete chat"]').click()
+  
 
 finally:
     print("Quiting Driver in Finally Block")
