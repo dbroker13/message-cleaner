@@ -22,3 +22,9 @@ ex
 
 ## 
 
+- Implement better logging
+- Implement ADB DND on/off
+- Clear specific message channel message by message
+- Implement parallel threads ie all the devices with WhatsApp etc
+- Test all channels deleted
+- Loop until all converstations are deleted

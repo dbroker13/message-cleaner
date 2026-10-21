@@ -108,5 +108,7 @@ try:
   
 
 finally:
+    sid = driver.session_id
+    print(f'https://ui.headspin.io/sessions/{sid}/waterfall')
     print("Quiting Driver in Finally Block")
     driver.quit()
