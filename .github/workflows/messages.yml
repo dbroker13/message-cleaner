@@ -53,3 +53,8 @@ jobs:
         env:
           Messages_API_Token: ${{ secrets.Messages_API_Token }}
         run: python messagesCleaner.py
+
+      - name: clean iMessage messages
+        env:
+          Messages_API_Token: ${{ secrets.Messages_API_Token }}
+        run: python iOSmessagesCleaner.py

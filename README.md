@@ -28,3 +28,4 @@ ex
 - Implement parallel threads ie all the devices with WhatsApp etc
 - Test all channels deleted
 - Loop until all converstations are deleted
+- Add total conversations deleted 
