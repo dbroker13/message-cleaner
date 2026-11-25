@@ -11,12 +11,13 @@ Run the workflow
 
 ## Local Run
 
-set API Token Variable
-export Messages_API_Token=token
-Execute the script with python 
-ex 
-``` python WhatsAppCleaner.py ```
+# messageCleaner
 
+python deviceOrchestrator.py --app messenger --device-id <device-id>
+
+python deviceOrchestrator.py --app messenger
+
+messenger, whatsapp, imessage
 
 ## Notes on devices
 
